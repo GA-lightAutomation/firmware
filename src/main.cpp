@@ -65,9 +65,10 @@ void loop(){
             client.println();
 
             // the content of the HTTP response follows the header:
-            client.print("<h2 style=\"text-align:center;\">Light Automation Prototype</h2>");
-            client.print("Click <a href=\"/H\">here</a> to turn the LED on pin 2 on.<br>");
-            client.print("Click <a href=\"/L\">here</a> to turn the LED on pin 2 off.<br>");
+            client.print("<!DOCTYPE html><html lang=\"en\">");
+            client.print("<head><title>EazyPizzy</title></head>");
+            client.print("<body><h2>No script</h2>Click <a href=\"/L\">here</a> to turn the LED on pin 2 off.<br></body>");
+            client.print("<script src=\"../complex/script.js\"></script></html>");
 
             // The HTTP response ends with another blank line:
             client.println();
