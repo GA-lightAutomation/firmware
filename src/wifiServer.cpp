@@ -12,6 +12,8 @@ JMongare@123
 
 const char* ssid     = "FABIAN";
 const char* password = "Gisore@123";
+String headT;
+String scriptT;
 WiFiServer server(80);
 
 
@@ -36,6 +38,19 @@ void serverSetup(){
     Serial.println(WiFi.localIP());
     
     server.begin();
+
+    //Prepare HTML content
+    
+    String stylePath = "http://127.0.0.1:5500/complex/style.css";
+    //stylePath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/style.css"; // uncomment to use hosted file
+    String htmlPath = "http://127.0.0.1:5500/complex/index.html";
+    //htmlPath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/index.html"; // uncomment to use hosted file
+    
+    //head tag
+    headT = "<head><link rel=\"stylesheet\" href=\""+stylePath+"\"><title>EazyPizzy</title></head>";
+    //script tag
+    scriptT = "<script >let postman = new XMLHttpRequest();postman.open(\"GET\", \""+htmlPath+"\", false);postman.send();document.body.innerHTML = postman.responseText;</script></html>";
+
 }
 
 void runServer(){
@@ -61,10 +76,10 @@ void runServer(){
 
             // the content of the HTTP response follows the header:
             client.print("<!DOCTYPE html><html lang=\"en\">");
-            client.print("<head><title>EazyPizzy</title></head>");
+            client.print(headT);
             client.print("");
             client.print("<body><h2>No script</h2>Click <a href=\"/H\">here</a> to turn the LED on pin 2 on.<br> Click <a href=\"/L\">here</a> to turn the LED on pin 2 off.<br></body>");
-            client.print("<script src=\"../complex/script.js\"></script></html>");
+            client.print(scriptT);
 
             // The HTTP response ends with another blank line:
             client.println();
