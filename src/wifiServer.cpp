@@ -1,7 +1,9 @@
 #include <Arduino.h>
-#include <WiFi.h>
 #include "globalV.h"
 
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <WiFiAP.h>
 
 /* 
 Gearbox Members
@@ -18,7 +20,7 @@ WiFiServer server(80);
 
 
 void serverSetup(){
-    // We start by connecting to a WiFi network
+    //start by connecting to a WiFi network
 
     Serial.println();
     Serial.println();
@@ -42,9 +44,9 @@ void serverSetup(){
     //Prepare HTML content
     
     String stylePath = "http://127.0.0.1:5500/complex/style.css";
-    //stylePath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/style.css"; // uncomment to use hosted file
+    stylePath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/style.css"; // uncomment to use hosted file
     String htmlPath = "http://127.0.0.1:5500/complex/index.html";
-    //htmlPath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/index.html"; // uncomment to use hosted file
+    htmlPath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/index.html"; // uncomment to use hosted file
     
     //head tag
     headT = "<head><link rel=\"stylesheet\" href=\""+stylePath+"\"><title>EazyPizzy</title></head>";
