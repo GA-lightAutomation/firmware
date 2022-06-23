@@ -14,10 +14,23 @@ JMongare@123
 
 const char* ssid     = "FABIAN";
 const char* password = "Gisore@123";
+//AP credentials
+const char* mySSID = "ESP32-AP";
+const char* myPassword = "esp32wifi";
+
 String headT;
 String scriptT;
 WiFiServer server(80);
 
+bool APflag = false;
+void APsetup(){
+  WiFi.softAP(mySSID, myPassword);
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.println();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+  APflag = true;
+}
 
 void serverSetup(){
     //start by connecting to a WiFi network
@@ -29,15 +42,25 @@ void serverSetup(){
 
     WiFi.begin(ssid, password);
 
+    int countdown = 10; //countdown to switch to AP
+
     while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+        delay(1000);
         Serial.print(".");
+        if (countdown==0){ //switch to AP
+          APsetup();
+          break;
+        }
+        countdown-=1;
     }
 
-    Serial.println("");
-    Serial.println("WiFi connected.");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
+    if (!APflag){
+      Serial.println("");
+      Serial.println("WiFi connected.");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+    }
+    
     
     server.begin();
 
