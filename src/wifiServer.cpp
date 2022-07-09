@@ -10,10 +10,12 @@ Gearbox Members
 Members@Gearbox
 Happy_home
 JMongare@123
+FABIAN
+Gisore@123
 */
 
-const char* ssid     = "FABIAN";
-const char* password = "Gisore@123";
+const char* ssid     = "Gearbox Members";
+const char* password = "Members@Gearbox";
 //AP credentials
 const char* mySSID = "ESP32-AP";
 const char* myPassword = "esp32wifi";
@@ -67,9 +69,9 @@ void serverSetup(){
     //Prepare HTML content
     
     String stylePath = "http://127.0.0.1:5500/complex/style.css";
-    stylePath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/style.css"; // uncomment to use hosted file
+    stylePath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/model-1/complex/style.css"; // uncomment to use hosted file
     String htmlPath = "http://127.0.0.1:5500/complex/index.html";
-    htmlPath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/main/complex/index.html"; // uncomment to use hosted file
+    htmlPath = "https://raw.githubusercontent.com/GA-lightAutomation/interface/model-1/complex/index.html"; // uncomment to use hosted file
     
     //head tag
     headT = "<head><link rel=\"stylesheet\" href=\""+stylePath+"\"><title>EazyPizzy</title></head>";
