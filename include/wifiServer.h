@@ -1,2 +1,1 @@
-void serverSetup();
-void runServer();
+int tcpServer();
