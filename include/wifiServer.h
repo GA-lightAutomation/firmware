@@ -1,2 +1,0 @@
-void serverSetup();
-void runServer();
