@@ -16,8 +16,8 @@ FABIAN
 Gisore@123
 */
 
-const char* ssid     = "FABIAN";
-const char* password = "Gisore@123";
+const char* ssid     = "Thee one";
+const char* password = "kenyans254";
 //AP credentials
 const char* mySSID = "ESP32-AP";
 const char* myPassword = "esp32wifi";
@@ -96,11 +96,11 @@ void runServer(){
           client.print("{\"Test\":\"Hello server\"}");
         else if(command=="OFF"){
           digitalWrite(blinkPin,HIGH);
-          client.print("{\"Response\":\"Light ON\"}");
+          client.print("{\"Response\":\"Light OFF\"}");
         }
         else if(command=="ON"){
           digitalWrite(blinkPin,LOW);
-          client.print("{\"Response\":\"Light Off\"}");
+          client.print("{\"Response\":\"Light ON\"}");
         }
         else
           client.print("{\"Error\":\"Command does not exist\"}");

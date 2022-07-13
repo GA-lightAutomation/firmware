@@ -1,101 +1,84 @@
 #include <Arduino.h>
-#include "globalV.h"
-
 #include <SPI.h>
 #include <MFRC522.h>
-#include <LiquidCrystal_I2C.h>
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
-LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
+#include "globalV.h"
 
-void setupRFID()
-{
-  pinMode(red, OUTPUT);
-  pinMode(blue, OUTPUT);
-  pinMode(green, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-  pinMode(locker, OUTPUT);
-  SPI.begin(); 
-  lcd.init();
-  lcd.backlight();
-  lcd.begin(16,2);
-  lcd.clear(); 
-  lcd.print("Scan Card!");
-  mfrc522.PCD_Init();   
-  Serial.println("Approximate your card to the reader...");
-  Serial.println();
+/*
+ * 
+ * Typical pin layout used:
+ * -----------------------------------------------------------------------------------------
+ *             MFRC522      Arduino       Arduino   Arduino    Arduino          Arduino
+ *             Reader/PCD   Uno/101       Mega      Nano v3    Leonardo/Micro   Pro Micro
+ * Signal      Pin          Pin           Pin       Pin        Pin              Pin
+ * -----------------------------------------------------------------------------------------
+ * RST/Reset   RST          9             5         D9         RESET/ICSP-5     RST
+ * SPI SS      SDA(SS)      10            53        D10        10               10
+ * SPI MOSI    MOSI         11 / ICSP-4   51        D11        ICSP-4           16
+ * SPI MISO    MISO         12 / ICSP-1   50        D12        ICSP-1           14
+ * SPI SCK     SCK          13 / ICSP-3   52        D13        ICSP-3           15
+ *
+ * More pin layouts for other boards can be found here: https://github.com/miguelbalboa/rfid#pin-layout
+ */
 
+#define SS_PIN 10
+#define RST_PIN 9
+ 
+MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
+
+MFRC522::MIFARE_Key key; 
+
+// Init array that will store new NUID 
+byte nuidPICC[4];
+
+
+/**
+ * Function to return UID
+ */
+String getUID(byte *buffer, byte bufferSize) {
+  String UID;
+  for (byte i = 0; i < bufferSize; i++) { 
+    UID+=buffer[i];
+  }
+  return UID;
 }
 
-void scanCard()
-{
-  if ( ! mfrc522.PICC_IsNewCardPresent()) 
-  {
-    return;
-  }
-  
-  if ( ! mfrc522.PICC_ReadCardSerial()) 
-  {
-    return;
-  }
-
-  lcd.begin(16,2);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Scan card");
-  Serial.print("UID tag :");
-  String content= "";
-  byte letter;
-  for (byte i = 0; i < mfrc522.uid.size; i++) 
-  {
-     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-     Serial.print(mfrc522.uid.uidByte[i], HEX);
-     content.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-     content.concat(String(mfrc522.uid.uidByte[i], HEX));
-  }
-  Serial.println();
-  Serial.print("Message : ");
-  content.toUpperCase();
-  lcd.print("Scan Card");    
-  digitalWrite(blue, HIGH); 
-
-  if (content.substring(1) == "73 78 D3 1C") // Make sure you change this with your own UID number
-  {
-    Serial.println("Authorised access");
-    digitalWrite(blue, LOW);
-    digitalWrite(green, HIGH);
-    digitalWrite(buzzer, HIGH);    
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.println("Authorised access");    
-    digitalWrite(locker, LOW);
-    Serial.println();
-    delay(1000);
-    digitalWrite(green, LOW);
-    digitalWrite(blue, HIGH);
-    digitalWrite(buzzer, LOW);
-    delay(5000);
-    digitalWrite(locker, HIGH);
-    delay(2500);
-   
-        
-  }
+void setupRFID() { 
+  Serial.begin(9600);
+  SPI.begin(); // Init SPI bus
+  rfid.PCD_Init(); // Init MFRC522 
+}
  
- else   {
-    Serial.println(" Access denied");
-    digitalWrite(blue, LOW);
-    digitalWrite(red, HIGH);
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.println("Access denied");
-    digitalWrite(locker, HIGH);
-    delay(1000);
-    digitalWrite(red, LOW);
-    digitalWrite(blue, HIGH);
-    delay(2500);
-    
+void scanCard() {
+
+  // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
+  if ( ! rfid.PICC_IsNewCardPresent())
+    return;
+
+  // Verify if the NUID has been read
+  if ( ! rfid.PICC_ReadCardSerial())
+    return;
+
+  if (rfid.uid.uidByte[0] != nuidPICC[0] || 
+    rfid.uid.uidByte[1] != nuidPICC[1] || 
+    rfid.uid.uidByte[2] != nuidPICC[2] || 
+    rfid.uid.uidByte[3] != nuidPICC[3] ) {
+    Serial.println(F("A new card has been detected."));
+
+    // Store NUID into nuidPICC array
+    for (byte i = 0; i < 4; i++) {
+      nuidPICC[i] = rfid.uid.uidByte[i];
+    }
+   
+    Serial.println(F("The NUID tag is:"));
+    Serial.print(F("In dec: "));
+    Serial.println(getUID(rfid.uid.uidByte, rfid.uid.size));
   }
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.println("Scan Card");
+  else Serial.println(F("Card read previously."));
+
+  // Halt PICC
+  rfid.PICC_HaltA();
+
+  // Stop encryption on PCD
+  rfid.PCD_StopCrypto1();
 }

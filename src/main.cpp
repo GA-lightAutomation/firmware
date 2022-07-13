@@ -17,14 +17,13 @@ void setup() {
   Serial.begin(115200);
   pinMode(blinkPin,OUTPUT);
   serverSetup();
-  // setupRFID();
-  //keypadSetup();
+  setupRFID();
 }
 
 void loop() {
   //blinkTest();
   runServer();
-  runClient();
-  // scanCard();
+  //runClient();
+  scanCard();
   //keyScanner();
 }
