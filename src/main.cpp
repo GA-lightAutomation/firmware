@@ -23,7 +23,6 @@ void setup() {
 void loop() {
   //blinkTest();
   runServer();
-  //runClient();
   scanCard();
-  //keyScanner();
+  serialScanner();
 }

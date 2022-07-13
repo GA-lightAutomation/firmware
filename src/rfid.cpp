@@ -3,7 +3,7 @@
 #include <MFRC522.h>
 
 #include "globalV.h"
-
+#include "postman.h"
 /*
  * 
  * Typical pin layout used:
@@ -72,6 +72,7 @@ void scanCard() {
     Serial.println(F("The NUID tag is:"));
     Serial.print(F("In dec: "));
     Serial.println(getUID(rfid.uid.uidByte, rfid.uid.size));
+    runClient("RFID",getUID(rfid.uid.uidByte, rfid.uid.size));
   }
   else Serial.println(F("Card read previously."));
 

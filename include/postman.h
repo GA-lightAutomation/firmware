@@ -1,3 +1,3 @@
 void serverSetup();
 void runServer();
-void runClient();
+void runClient(String,String);

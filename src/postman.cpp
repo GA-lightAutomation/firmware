@@ -102,6 +102,14 @@ void runServer(){
           digitalWrite(blinkPin,LOW);
           client.print("{\"Response\":\"Light ON\"}");
         }
+        else if(command=="authenticate"){
+          Serial.println("DOORS OPEN");
+          client.print("{\"Response\":\"Access Granted\"}");
+        }
+        else if(command=="denied"){
+          Serial.println("NO SUCH USER");
+          client.print("{\"Response\":\"Access Denied\"}");
+        }
         else
           client.print("{\"Error\":\"Command does not exist\"}");
         
@@ -127,13 +135,12 @@ void runServer(){
   }
 }
 
-void runClient(){
+void runClient(String command,String payload){
   const int    HTTP_PORT   = 5000;
   const String HTTP_METHOD = "GET"; // or "POST"
-  const char   HOST_NAME[] = "192.168.100.12"; // hostname of web server:
+  const char   HOST_NAME[] = "192.168.0.103"; // hostname of web server:
   const String PATH_NAME   = "";
-  String ID = "1234";
-  String queryString = "?ID="+ID;
+  String queryString = "/esp?command="+command+"&payload="+payload;
 
   WiFiClient client;
   if(client.connect(HOST_NAME, HTTP_PORT)) {
