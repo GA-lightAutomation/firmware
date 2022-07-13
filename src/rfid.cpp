@@ -44,7 +44,6 @@ String getUID(byte *buffer, byte bufferSize) {
 }
 
 void setupRFID() { 
-  Serial.begin(9600);
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522 
 }
