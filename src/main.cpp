@@ -3,7 +3,7 @@
 
 #include "globalV.h"
 #include "rfid.h"
-#include "keypad.h"
+#include "strokes.h"
 #include "postman.h"
 
 void blinkTest(){
@@ -24,5 +24,6 @@ void loop() {
   //blinkTest();
   runServer();
   scanCard();
+  //keysScanner();
   serialScanner();
 }

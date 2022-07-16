@@ -14,10 +14,12 @@ Happy_home
 JMongare@123
 FABIAN
 Gisore@123
+Thee one
+kenyans254
 */
 
-const char* ssid     = "Thee one";
-const char* password = "kenyans254";
+const char* ssid     = "FABIAN";
+const char* password = "Gisore@123";
 //AP credentials
 const char* mySSID = "ESP32-AP";
 const char* myPassword = "esp32wifi";
