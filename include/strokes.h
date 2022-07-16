@@ -1,3 +1,3 @@
 void keypadSetup();
-void keysScanner();
+void keyScanner();
 void serialScanner();

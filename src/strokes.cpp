@@ -1,39 +1,100 @@
 #include <Arduino.h>
 #include "postman.h"
-#include "Adafruit_Keypad.h"
+#include "globalV.h"
+//constants
+const String keys[4][4] = {
+  {"1","2","3","A"},
+  {"4","5","6","B"},
+  {"7","8","9","C"},
+  {"*","0","#","D"}
+  };
+int count = 0;
+void keypadSetup() {
+  //Pins Setup
+  pinMode(R1,OUTPUT);digitalWrite(R1,HIGH);
+  pinMode(R2,OUTPUT);digitalWrite(R2,HIGH);
+  pinMode(R3,OUTPUT);digitalWrite(R3,HIGH);
+  pinMode(R4,OUTPUT);digitalWrite(R4,HIGH);
+  pinMode(C1,INPUT);
+  pinMode(C2,INPUT);
+  pinMode(C3,INPUT);
+  pinMode(C4,INPUT);
+  //Serial Monitor Setup
+  Serial.begin(9600);
+}
+/*
+*START KEYPAD
+*/
 
-
-#define KEYPAD_PID3844
-
-#define R1    12
-#define R2    11
-#define R3    10
-#define R4    9
-#define C1    8
-#define C2    7
-#define C3    6
-#define C4    5
-// leave this import after the above configuration
-#include "keypad_config.h"
-
-//initialize an instance of class NewKeypad
-Adafruit_Keypad customKeypad = Adafruit_Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS);
-
+int scanCol(){
+  int c1=digitalRead(C1);
+  int c2=digitalRead(C2);
+  int c3=digitalRead(C3);
+  int c4=digitalRead(C4);
+  if (c1){
+    return 1;
+  }else if (c2){
+    return 2;
+  }else if (c3){
+    return 3;
+  }else if (c4){
+    return 4;
+  }else{
+    return 0;
+  }  
+}
+int scanRow(int col){
+    int activeCol;
+    if (col>0){
+        if(col==1) activeCol=C1;
+        if(col==2) activeCol=C2;
+        if(col==3) activeCol=C3;
+        if(col==4) activeCol=C4;
+        digitalWrite(R1,LOW);
+        if(!digitalRead(activeCol)) return 1;
+        digitalWrite(R2,LOW);
+        if(!digitalRead(activeCol)) return 2;
+        digitalWrite(R3,LOW);
+        if(!digitalRead(activeCol)) return 3;
+        digitalWrite(R4,LOW);
+        if(!digitalRead(activeCol)) return 4;
+    }else{
+        return 0;
+    }
+}
+String keypad(){
+  int col = scanCol();
+  int row = scanRow(col);
+  digitalWrite(R1,HIGH);
+  digitalWrite(R2,HIGH);
+  digitalWrite(R3,HIGH);
+  digitalWrite(R4,HIGH);
+  if(col>0&&row>0){
+    delay(300);
+    return keys[row-1][col-1];
+  }else{
+    return "";
+  }
+}
+/*
+*END KEYPAD
+*/
 String PIN;
 
-void keysScanner(){
-  // put your main code here, to run repeatedly:
-  customKeypad.tick();
-
-  while(customKeypad.available()){
-    keypadEvent e = customKeypad.read();
-    Serial.print((char)e.bit.KEY);
-    if(e.bit.EVENT == KEY_JUST_PRESSED) Serial.println(" pressed");
-    else if(e.bit.EVENT == KEY_JUST_RELEASED) Serial.println(" released");
+void keyScanner(){
+   //Keypad
+  String key=keypad();
+  if (key){
+    PIN+=key;
   }
-
-  delay(10);
+  if(PIN.length()==4){
+    Serial.print("You enterd: ");
+    Serial.println(PIN);
+    runClient("keypad",PIN);
+    PIN="";
+  }
 }
+
 void serialScanner(){//get input from serial monitor for testing
   String key;
   while (Serial.available() != 0) {
