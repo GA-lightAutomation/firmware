@@ -1,21 +1,39 @@
 #include <Arduino.h>
 
+/*
+#####################################################
+# Use                   | Pin(s)            # Total #
+#####################################################
+# Reserved              |  1,3              # 2     #
+#####################################################
+# Keypad                | (13...20)         | 7     #
+#####################################################
+# Blink test            | 5                 | 1     #
+#####################################################
+# RFID                  | 22,21,23,19,18    | 5     #
+#####################################################
+# HC-SRO4               |
+#####################################################
+# Others                |
+#####################################################
+#       TOTAL                               | 15    #
+#####################################################
+*/
+
+
 #define SS_PIN 10
 #define RST_PIN 9
 
-#define red 5
-#define blue 3
-#define green 4
-
-#define locker 16
-#define buzzer 2
+#define red 2
+#define blue 4
+#define green 6
 
 #define blinkPin 5
-#define R1 12
-#define R2 11
-#define R3 10
-#define R4 9
-#define C1 8
-#define C2 7
-#define C3 6
-#define C4 5
+#define R1 13
+#define R2 14
+#define R3 15
+#define R4 16
+#define C1 17
+#define C2 18
+#define C3 19
+#define C4 20

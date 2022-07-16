@@ -18,7 +18,6 @@ void setup() {
   pinMode(blinkPin,OUTPUT);
   serverSetup();
   setupRFID();
-  //keypadSetup();
 }
 
 void loop() {
