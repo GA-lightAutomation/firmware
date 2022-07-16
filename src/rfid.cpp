@@ -72,6 +72,7 @@ void scanCard() {
     Serial.println(F("The NUID tag is:"));
     Serial.print(F("In dec: "));
     Serial.println(getUID(rfid.uid.uidByte, rfid.uid.size));
+    Serial.println("");
     runClient("RFID",getUID(rfid.uid.uidByte, rfid.uid.size));
   }
   else Serial.println(F("Card read previously."));
