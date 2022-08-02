@@ -26,7 +26,7 @@ void keyScanner(){
   if(PIN.length()==4){
     Serial.print("You enterd: ");
     Serial.println(PIN);
-    runClient("keypad",PIN);
+    sendData("keypad",PIN);
     PIN="";
   }
 }
@@ -34,16 +34,14 @@ void keyScanner(){
 void serialScanner(){//get input from serial monitor for testing
   String key;
   while (Serial.available() != 0) {
-    Serial.print("You entered: ");
     key = Serial.readString();
-    Serial.println(key);
-  }
-  
-  if (key){
     PIN+=key;
   }
+
   if(PIN.length()==4){
-    runClient("keypad",PIN);
+    Serial.print("You enterd: ");
+    Serial.println(PIN);
+    sendData("keypad",PIN);
     PIN="";
   }
 }

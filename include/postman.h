@@ -1,3 +1,2 @@
-void serverSetup();
-void runServer();
-void runClient(String,String);
+void wifiSetup();
+void sendData(String,String);

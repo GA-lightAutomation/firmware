@@ -5,6 +5,7 @@
 #include "rfid.h"
 #include "strokes.h"
 #include "postman.h"
+#include "http.h"
 
 void blinkTest(){
   digitalWrite(blinkPin,HIGH);
@@ -16,13 +17,15 @@ void blinkTest(){
 void setup() {
   Serial.begin(115200);
   pinMode(blinkPin,OUTPUT);
-  serverSetup();
+  wifiSetup();
+  setupHTTP();
   setupRFID();
 }
 
 void loop() {
   //blinkTest();
-  runServer();
+  runHTTPserver();
   scanCard();
   keyScanner();
+  serialScanner();
 }
