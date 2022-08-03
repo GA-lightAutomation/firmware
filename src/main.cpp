@@ -5,7 +5,6 @@
 #include "rfid.h"
 #include "strokes.h"
 #include "postman.h"
-#include "http.h"
 
 void blinkTest(){
   digitalWrite(blinkPin,HIGH);
@@ -20,6 +19,7 @@ void setup() {
   wifiSetup();
   setupHTTP();
   setupRFID();
+  setupMQTT();
 }
 
 void loop() {
