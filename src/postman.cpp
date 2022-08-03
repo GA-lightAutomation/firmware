@@ -8,7 +8,9 @@
 #include <WiFiAP.h>
 #include <PubSubClient.h>
 
-/* 
+//TODO: Handle broker reset error
+
+/*
 Gearbox Members
 Members@Gearbox
 Happy_home
@@ -64,8 +66,8 @@ void wifiSetup(){
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
     }
-    
-    
+
+
 }
 
 /*
@@ -104,30 +106,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 }
 
-void reconnect() {
-  // Loop until we're reconnected
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    // Create a random client ID
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
-    // Attempt to connect
-    if (client.connect(clientId.c_str())) {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      client.publish("outTopic", "hello world");
-      // ... and resubscribe
-      client.subscribe("inTopic");
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
-  }
-}
-
 void setupMQTT() {
   pinMode(blinkPin, OUTPUT);     // Initialize the BUILTIN_LED pin as an output
   client.setServer(mqtt_server, 1883);
@@ -135,21 +113,40 @@ void setupMQTT() {
 }
 
 bool runMQTT(String topic,String message){
-
-  if (!client.connected()) {
-    reconnect();
+  //Attempt connection
+  String clientId = "ESP32";
+  if (client.connect(clientId.c_str())) {
+      Serial.println("connected");
+      client.publish(topic.c_str(), message.c_str());
+      client.subscribe("ACK");
+  }else{
+    int count = 0;
+    while (!client.connected() && count!=3) {
+      count++;
+      Serial.print("Attempting MQTT connection...");
+      // Create a random client ID
+      // Attempt to connect
+      if (client.connect(clientId.c_str())) {
+        Serial.println("connected");
+        // Once connected, publish an announcement...
+        client.publish(topic.c_str(), message.c_str());
+        // ... and resubscribe
+        client.subscribe("inTopic");
+      } else {
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 3 seconds");
+        // Wait 5 seconds before retrying
+        delay(3000);
+      }
+    }
+    return false;
   }
+
   client.loop();
 
-  unsigned long now = millis();
-  if (now - lastMsg > 2000) {
-    lastMsg = now;
-    ++value;
-    snprintf (msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
-    Serial.print("Publish message: ");
-    Serial.println(msg);
-    client.publish("outTopic", msg);
-  }
+  client.subscribe("ACK");
+
   return true;
 }
 /*
@@ -193,7 +190,7 @@ void runHTTPserver(){
         client.println("HTTP/1.1 200 OK");
         client.println("Content-type:text/json");
         client.println();//end of header
-        
+
         if(command=="Test")
           client.print("{\"Test\":\"Hello server\"}");
         else if(command=="OFF"){
@@ -214,7 +211,7 @@ void runHTTPserver(){
         }
         else
           client.print("{\"Error\":\"Command does not exist\"}");
-        
+
         client.println();//end of response
         break;
       }
@@ -233,7 +230,7 @@ void runHTTPserver(){
         break;
       }
     }
-    
+
   }
 }
 
@@ -254,7 +251,7 @@ bool runHTTPclient(String command,String payload){
     client.println(); // end HTTP header
     return true;
   } else {
-    Serial.println("connection failed");
+    Serial.println("HTTP connection failed");
     return false;
   }
 }
