@@ -85,25 +85,20 @@ unsigned long lastMsg = 0;
 #define MSG_BUFFER_SIZE	(50)
 char msg[MSG_BUFFER_SIZE];
 int value = 0;
+bool receiveFlag = false; //no message received
 
 void callback(char* topic, byte* payload, unsigned int length) {
+  String message = "";
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
   for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+    //Serial.print((char)payload[i]);
+    message+=(char)payload[i];
   }
-  Serial.println();
+  Serial.println(message);
 
-  // Switch on the LED if an 1 was received as first character
-  if ((char)payload[0] == '1') {
-    digitalWrite(blinkPin, LOW);   // Turn the LED on (Note that LOW is the voltage level
-    // but actually the LED is on; this is because
-    // it is active low on the ESP-01)
-  } else {
-    digitalWrite(blinkPin, HIGH);  // Turn the LED off by making the voltage HIGH
-  }
-
+  receiveFlag=true;
 }
 
 void setupMQTT() {
@@ -116,9 +111,13 @@ bool runMQTT(String topic,String message){
   //Attempt connection
   String clientId = "ESP32";
   if (client.connect(clientId.c_str())) {
+    if(client.subscribe("ACK")){
       Serial.println("connected");
-      client.publish(topic.c_str(), message.c_str());
-      client.subscribe("ACK");
+      client.publish(topic.c_str(), message.c_str()); //hint returns bool
+      while(!receiveFlag) client.loop();
+      receiveFlag = false;
+    }else
+      Serial.println("Could not subscribe");
   }else{
     int count = 0;
     while (!client.connected() && count!=3) {
@@ -142,10 +141,6 @@ bool runMQTT(String topic,String message){
     }
     return false;
   }
-
-  client.loop();
-
-  client.subscribe("ACK");
 
   return true;
 }
