@@ -8,7 +8,7 @@
 #include <WiFiAP.h>
 #include <PubSubClient.h>
 
-//TODO: Handle broker reset error
+//TODO: Handle when mqtt client on server is not running
 
 /*
 Gearbox Members
@@ -19,14 +19,17 @@ FABIAN
 Gisore@123
 Thee one
 kenyans254
+Macsc
+micron@2022
 */
 
-const char* ssid     = "FABIAN";
-const char* password = "Gisore@123";
+const char* ssid     = "Macsc";
+const char* password = "micron@2022";
 //AP credentials
 const char* mySSID = "ESP32-AP";
 const char* myPassword = "esp32wifi";
 
+const char* server_addr = "192.168.100.18";
 
 bool APflag = false;
 void APsetup(){
@@ -77,7 +80,7 @@ bool runMQTT(String topic,String message)
 ###################################################################
 */
 
-const char* mqtt_server = "192.168.100.12";
+
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -103,7 +106,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void setupMQTT() {
   pinMode(blinkPin, OUTPUT);     // Initialize the BUILTIN_LED pin as an output
-  client.setServer(mqtt_server, 1883);
+  client.setServer(server_addr, 1883);
   client.setCallback(callback);
 }
 
@@ -232,16 +235,15 @@ void runHTTPserver(){
 bool runHTTPclient(String command,String payload){
   const int    HTTP_PORT   = 5000;
   const String HTTP_METHOD = "GET"; // or "POST"
-  const char   HOST_NAME[] = "192.168.0.203"; // hostname of web server:
   const String PATH_NAME   = "";
   String queryString = "/esp?command="+command+"&payload="+payload;
 
   WiFiClient client;
-  if(client.connect(HOST_NAME, HTTP_PORT)) {
+  if(client.connect(server_addr, HTTP_PORT)) {
     Serial.println("Connected to server");
     // send HTTP request header
     client.println("GET " + PATH_NAME + queryString + " HTTP/1.1");
-    client.println("Host: " + String(HOST_NAME));
+    client.println("Host: " + String(server_addr));
     client.println("Connection: close");
     client.println(); // end HTTP header
     return true;
