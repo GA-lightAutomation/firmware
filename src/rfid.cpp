@@ -21,8 +21,7 @@
  * More pin layouts for other boards can be found here: https://github.com/miguelbalboa/rfid#pin-layout
  */
 
-#define SS_PIN 21
-#define RST_PIN 22
+
  
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 

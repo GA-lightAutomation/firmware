@@ -1,2 +1,2 @@
-void mqttSetup();
+void setupMQTT();
 bool runMQTT(String, String);

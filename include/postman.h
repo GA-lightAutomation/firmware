@@ -1,6 +1,3 @@
-void wifiSetup();
-void setupHTTP();
-void setupMQTT();
-void runHTTPserver();
-bool runHTTPclient(String,String);
+void postmanSetup();
+void runPostMan();
 void sendData(String,String);

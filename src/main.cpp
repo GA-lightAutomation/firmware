@@ -16,15 +16,12 @@ void blinkTest(){
 void setup() {
   Serial.begin(115200);
   pinMode(blinkPin,OUTPUT);
-  wifiSetup();
-  setupHTTP();
-  setupRFID();
-  setupMQTT();
+  postmanSetup();
 }
 
 void loop() {
   //blinkTest();
-  runHTTPserver();
+  runPostMan();
   scanCard();
   keyScanner();
   serialScanner();

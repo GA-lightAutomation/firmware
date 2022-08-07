@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+#define server_addr "192.168.100.18"
 /*
             PIN USAGE
 0,1,2,3,4,5,12,13,14,15,18,19,21,22,23,25,26,27,32,33,34,36,39
@@ -25,8 +26,8 @@
 */
 
 
-#define SS_PIN 10
-#define RST_PIN 9
+#define SS_PIN 21
+#define RST_PIN 22
 
 #define red 2
 #define blue 4
